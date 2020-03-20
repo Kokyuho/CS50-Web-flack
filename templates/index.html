@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% block script %}
+    <script>
+
+        // Functions running when DOM has loaded
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Set username to default if not available
+            if (!localStorage.getItem('username'))
+                localStorage.setItem('username', '{{username}}');
+
+            // Retrieve and update local storage username
+            document.querySelector('#usernameDisplay').innerHTML = localStorage.getItem('username');
+
+            // Onsubmit of username form
+            document.querySelector('#form').onsubmit = function() {
+
+                // Get new username and update it
+                const username = document.querySelector('#username').value;
+                if (username !== "") {
+                    document.querySelector('#usernameDisplay').innerHTML = username;
+                    localStorage.setItem('username', username);
+                }
+
+                // Clear input field
+                document.querySelector('#username').value = '';
+
+                // Stop form from submitting
+                return false;
+            };
+
+            // Onsubmit of new channel form
+            document.querySelector('#new-channel').onsubmit = () => {
+
+                // Initialize new request
+                const request = new XMLHttpRequest();
+                const channelName = document.querySelector('#channel').value;
+                request.open('POST', '/addChannel');
+
+                // Callback function for when request completes
+                request.onload = () => {
+                    // Extract JSON data from request
+                    const data = JSON.parse(request.responseText);
+
+                    if (data.success) {
+                        alert('Channel created successfully!');
+                    }
+                }
+
+                // Add data to send with request
+                const data = new FormData();
+                data.append('channelName', channelName);
+
+                // Send request
+                request.send(data);
+
+                // Create new item for list
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="channels/${channelName}">${channelName}</a>`;
+
+                // Add new item to task list
+                document.querySelector('#channelList').append(li);
+
+                // Clear input field
+                document.querySelector('#channel').value = '';
+
+                // Stop form from submitting
+                return false;
+            };
+        });
+    </script>
+{% endblock %}
+
+{% block heading %}
+    Welcome to FlaCK
+{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+
+        <div class="col-sm-4">
+            <h2>
+                Your current username is: <span id="usernameDisplay">{{username}}</span>
+            </h2>
+            <br>
+            <form id="form" action="#" method="post">
+                <label id="search">Change username: </label>
+                <input type="text" id="username" name="username">
+                <input type="submit">
+            </form>
+        </div>
+
+        <div class="col-sm-8">
+            <h2>
+                Available channels:
+            </h2>
+            <br>
+            <ol id="channelList">
+                {% for channel in channels %}
+                    <li>
+                        <a href="channels/{{ channel }}">{{ channel }}</a>
+                    </li>
+                {% endfor %}
+            </ol>
+            <form id="new-channel">
+                <input id="channel" name="channelName" autocomplete="off" placeholder="Type channel name here" type="text" size="50">
+                <input class="btn btn-secondary" type="submit" value="Create new channel">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
