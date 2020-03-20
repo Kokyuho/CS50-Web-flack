@@ -40,9 +40,11 @@
 
                 // Callback function for when request completes
                 request.onload = () => {
+
                     // Extract JSON data from request
                     const data = JSON.parse(request.responseText);
 
+                    // Alert when the channel was successfully created
                     if (data.success) {
                         alert('Channel created successfully!');
                     }
@@ -69,6 +71,7 @@
                 return false;
             };
         });
+
     </script>
 {% endblock %}
 
@@ -78,8 +81,10 @@
 
 {% block body %}
 
+    <!-- Row -->
     <div class="row">
-
+        
+        <!-- Left column: Username display and change form -->
         <div class="col-sm-4">
             <h2>
                 Your current username is: <span id="usernameDisplay">{{username}}</span>
@@ -88,10 +93,12 @@
             <form id="form" action="#" method="post">
                 <label id="search">Change username: </label>
                 <input type="text" id="username" name="username">
-                <input type="submit">
+                <input type="submit" value="Save">
             </form>
         </div>
-
+        <!-- Left column -->
+        
+        <!-- Right column: Channel list and new channel form -->
         <div class="col-sm-8">
             <h2>
                 Available channels:
@@ -109,6 +116,9 @@
                 <input class="btn btn-secondary" type="submit" value="Create new channel">
             </form>
         </div>
+        <!-- Left column -->
+
     </div>
+    <!-- Row -->
 
 {% endblock %}

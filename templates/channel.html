@@ -1,38 +1,12 @@
 {% extends "layout.html" %}
 
 {% block script %}
+
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 
 <script>
 
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                $('#blah')
-                    .attr('src', e.target.result)
-                    .height(200);
-            };
-
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    function readURL2(input) {
-        if (input) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                $('#blah2')
-                    .attr('src', e.target.result)
-                    .height(200);
-            };
-
-            reader.readAsDataURL(input);
-        }
-    }
-
+    // DOM Content loaded script
     document.addEventListener('DOMContentLoaded', () => {
 
         // Connect to websocket
@@ -43,6 +17,7 @@
 
             // Message form should emit a "submit message" event on submission
             document.querySelector('#new-message').onsubmit = () => {
+
                 // Add data to send with new message
                 const content = document.querySelector('#message').value;
                 const username = localStorage.getItem('username');
@@ -60,21 +35,29 @@
 
             // File form should emit a "submit file" event on submission
             document.querySelector('#upload-file').onsubmit = () => {
-                // Add data to send with file
-                const file = document.getElementById('file').files[0];
-                const reader = new FileReader();
-                reader.addEventListener("load", function () {
-                    // convert image file to base64 string
-                    source = reader.result;
-                    socket.emit('submit file', {'file': source, 'username': localStorage.getItem('username'), 'channelName': '{{ channelName }}'});
-                }, false);
-                reader.readAsDataURL(file);
 
-                // Emit submit message
-                // socket.emit('submit file', {'file': source, 'username': username, 'channelName': channelName});
+                if (document.getElementById('file').files[0]) {
 
-                // Clear input field
-                document.querySelector('#message').value = '';
+                    // Add data to send with file
+                    const file = document.getElementById('file').files[0];
+
+                    // Create a file reader and use it to export and emit file data as DataURL
+                    const reader = new FileReader();
+                    reader.addEventListener("load", function () {
+
+                        // convert image file to base64 string
+                        source = reader.result;
+
+                        // Emit submit file
+                        socket.emit('submit file', {'file': source, 'username': localStorage.getItem('username'), 'channelName': '{{ channelName }}'});
+
+                    }, false);
+
+                    reader.readAsDataURL(file);
+
+                    // Clear input field
+                    document.querySelector('#file').value = '';
+                }
 
                 // Stop form from submitting
                 return false;
@@ -91,62 +74,17 @@
         // When a new file is announced, add to the unordered list
         socket.on('announce file', data => {
             const li = document.createElement('li');
-            // console.log(data.file);
             li.innerHTML = `<span class="font-weight-bold">[${data.username} @ ${data.datetime}]</span>: <img id="blah2" height=200 src="${data.file}" alt="your image 2" />`;
-            // Replace pic and append
-            // readURL2(document.getElementById('upload-file')[0]);
-            // readURL2(data.file);
             document.querySelector('#messages').append(li);
-            // console.log(document.getElementById('blah2'));
         });
 
         // Enable button only if there is text in the input field
         document.querySelector('#message').onkeyup = () => {
             if (document.querySelector('#message').value.length > 0)
-                document.querySelector('#submit').disabled = false;
+                document.querySelector('#send-message-btn').disabled = false;
             else
-                document.querySelector('#submit').disabled = true;
+                document.querySelector('#send-message-btn').disabled = true;
         };
-
-        // // Onsubmit of message form
-        // document.querySelector('#new-message').onsubmit = () => {
-
-        //     // Initialize new request for server time
-        //     const request = new XMLHttpRequest();
-        //     request.open('POST', '/getTime');
-
-        //     // Callback function for when request of server time completes
-        //     request.onload = () => {
-
-        //         // Extract JSON data from request
-        //         const data = JSON.parse(request.responseText);
-
-        //         // Create new item for list
-        //         const li = document.createElement('li');
-        //         li.innerHTML = `<span class="font-weight-bold">[${localStorage.getItem('username')} @ ${data.datetime}]</span>: ${message}`
-
-        //         // Add new item to message list
-        //         document.querySelector('#messages').append(li);
-
-        //         // Clear input field
-        //         document.querySelector('#message').value = '';
-        //     }
-
-        //     // Query for message
-        //     const message = document.querySelector('#message').value;
-
-        //     // Add data to send with request
-        //     const data = new FormData();
-        //     data.append('message', message);
-        //     data.append('channelName', "{{ channelName }}");
-        //     data.append('username', localStorage.getItem('username'))
-
-        //     // Send request
-        //     request.send(data);
-
-        //     // Stop form from submitting
-        //     return false;
-        // };
 
     });
 </script>
@@ -155,16 +93,24 @@
 
 {% block heading %}
     FlaCK Channel: {{ channelName }}
+    <hr>
+    <h3>Your username: <span id="usernameSpan">Test</span></h3>
+    <script>document.getElementById("usernameSpan").innerHTML=localStorage.getItem('username');</script>
 {% endblock %}
 
 
 {% block body %}
 
+<!-- Main container -->
 <div class="container">
 
+    <!-- First Row: Messages, new message form -->
     <div class="row">
 
+        <!-- Main column -->
         <div class="col-sm-9">
+
+            <!-- Message list -->
             <h2>Messages</h2>
 
             <ul id="messages" class="list-unstyled">
@@ -179,36 +125,54 @@
 
                 {% endfor %}
             </ul>
+            <!-- Message list -->
 
             <hr>
-
+            
+            <!-- New message form -->
             <form id="new-message">
                 <input id="message" autocomplete="off" autofocus placeholder="New message" type="text" size="100">
-                <input id="submit" type="submit">
+                <input id="send-message-btn" type="submit" value="Send" class="btn btn-secondary">
             </form>
+            <!-- New message form -->
+
         </div>
+        <!-- Main column -->
 
         <div class="col-sm-3"></div>
     </div>
+    <!-- First Row: Messages, new message form -->
 
     <hr>
 
+    <!-- Second Row: Upload file form, leave channel button -->
     <div class="row">
-        <div class="col-sm-6">
-            <form id="upload-file" method="post" enctype="multipart/form-data">
-                <label for="file">Select a file</label>
-                <input name="file" id="file" type="file" onchange="readURL(this);">
-                <img id="blah" src="#" alt="your image" />
-                <input id="upload-file-btn" type="submit" value="Upload" class="btn btn-secondary">
-            </form>
-        </div>
 
+        <!-- Left column -->
+        <div class="col-sm-6">
+
+            <!-- Upload file form -->
+            <form id="upload-file" method="post" enctype="multipart/form-data">
+                <label for="file">Upload a file to the channel: </label>
+                <input name="file" id="file" type="file">
+                <input id="upload-file-btn" type="submit" value="Upload" class="btn btn-secondary">
+                <script>document.querySelector('#send-message-btn').disabled = true;</script>
+            </form>
+            <!-- Upload file form -->
+
+        </div>
+        <!-- Left column -->
+
+        <!-- Right column -->
         <div class="col-sm-6">
             <a href='{{ url_for("home") }}'><button type="button" class="btn btn-secondary">Leave Channel</button></a>
         </div>
+        <!-- Right column -->
+
     </div>
+    <!-- Second Row: Upload file form, leave channel button -->
 
 </div>
-
+<!-- Main container -->
 
 {% endblock %}

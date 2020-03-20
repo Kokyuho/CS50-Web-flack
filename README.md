@@ -9,3 +9,5 @@ In order to run this app, the following environment variables must be set up:
 FLASK_APP=application.py
 SECRET_KEY=<somekey>
 
+# Work left
++ Private messaging between two users shall be possible.
