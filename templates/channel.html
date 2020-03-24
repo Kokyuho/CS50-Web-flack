@@ -15,13 +15,16 @@
         // When connected, configure buttons
         socket.on('connect', () => {
 
+            // Join room on connection
+            socket.emit('join', { 'channelName': '{{ channelName|safe }}', 'username': localStorage.getItem('username')});
+
             // Message form should emit a "submit message" event on submission
             document.querySelector('#new-message').onsubmit = () => {
 
                 // Add data to send with new message
                 const content = document.querySelector('#message').value;
                 const username = localStorage.getItem('username');
-                const channelName = '{{ channelName }}'
+                const channelName = '{{ channelName|safe }}';
 
                 // Emit submit message
                 socket.emit('submit message', {'content': content, 'username': username, 'channelName': channelName});
@@ -49,7 +52,7 @@
                         source = reader.result;
 
                         // Emit submit file
-                        socket.emit('submit file', {'file': source, 'username': localStorage.getItem('username'), 'channelName': '{{ channelName }}'});
+                        socket.emit('submit file', {'file': source, 'username': localStorage.getItem('username'), 'channelName': '{{ channelName|safe }}'});
 
                     }, false);
 
@@ -64,18 +67,20 @@
             };
         });
 
-        // When a new message is announced, add to the unordered list
+        // When a new message is announced, add to the unordered list and send a received message
         socket.on('announce message', data => {
             const li = document.createElement('li');
-            li.innerHTML = `<span class="font-weight-bold">[${data.username} @ ${data.datetime}]</span>: ${data.content}`;
+            li.innerHTML = `<span class="font-weight-bold">[<a href="/privateMessage/${data.username}/{{ username }}">${data.username}</a> @ ${data.datetime}]</span>: ${data.content}`;
             document.querySelector('#messages').append(li);
+            socket.emit('message received', {'username': localStorage.getItem('username'), 'channelName': '{{ channelName|safe }}'});
         });
 
         // When a new file is announced, add to the unordered list
         socket.on('announce file', data => {
             const li = document.createElement('li');
-            li.innerHTML = `<span class="font-weight-bold">[${data.username} @ ${data.datetime}]</span>: <img id="blah2" height=200 src="${data.file}" alt="your image 2" />`;
+            li.innerHTML = `<span class="font-weight-bold">[<a href="/privateMessage/${data.username}/{{ username }}">${data.username}</a> @ ${data.datetime}]</span>: <img id="blah2" height=200 src="${data.file}" alt="your image 2" />`;
             document.querySelector('#messages').append(li);
+            socket.emit('file received', {'username': localStorage.getItem('username'), 'channelName': '{{ channelName|safe }}'});
         });
 
         // Enable button only if there is text in the input field
@@ -94,8 +99,7 @@
 {% block heading %}
     FlaCK Channel: {{ channelName }}
     <hr>
-    <h3>Your username: <span id="usernameSpan">Test</span></h3>
-    <script>document.getElementById("usernameSpan").innerHTML=localStorage.getItem('username');</script>
+    <h3>Your username: {{ username }}</h3>
 {% endblock %}
 
 
@@ -117,10 +121,10 @@
                 {% for message in messages %}
 
                     {% if 'image' in message[2] %}
-                        <li><span class="font-weight-bold">[{{ message[0] }}]</span>: <img height=200 src="{{ message[1] }}"></li>
+                        <li><span class="font-weight-bold">[<a href="/privateMessage/{{ message[0] }}/{{ username }}">{{ message[0] }}</a> @ {{ message[1] }}]</span>: <img height=200 src="{{ message[2] }}"></li>
                         <!-- <li><span class="font-weight-bold">[{{ message[0] }}]</span>: <img height=200 src="/instance/uploads/{{ message[1] }}"></li> -->
                     {% else %}
-                        <li><span class="font-weight-bold">[{{ message[0] }}]</span>: {{ message[1] }}</li>
+                        <li><span class="font-weight-bold">[<a href="/privateMessage/{{ message[0] }}/{{ username }}">{{ message[0] }}</a> @ {{ message[1] }}]</span>: {{ message[2] }}</li>
                     {% endif %}
 
                 {% endfor %}
@@ -131,7 +135,7 @@
             
             <!-- New message form -->
             <form id="new-message">
-                <input id="message" autocomplete="off" autofocus placeholder="New message" type="text" size="100">
+                <input id="message" autocomplete="off" autofocus placeholder="New message" type="text" class="form-control input-lg">
                 <input id="send-message-btn" type="submit" value="Send" class="btn btn-secondary">
             </form>
             <!-- New message form -->

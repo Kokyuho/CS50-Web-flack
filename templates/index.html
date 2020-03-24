@@ -21,6 +21,17 @@
                 if (username !== "") {
                     document.querySelector('#usernameDisplay').innerHTML = username;
                     localStorage.setItem('username', username);
+
+                    // Initialize new request
+                    const request = new XMLHttpRequest();
+                    request.open('POST', '/saveUsername');
+
+                    // Add data to send with request
+                    const data = new FormData();
+                    data.append('username', username);
+
+                    // Send request
+                    request.send(data);
                 }
 
                 // Clear input field

@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block script %}
+
+<script>
+</script>
+
+{% endblock %}
+
+
+{% block heading %}
+    {{ username }} Private Conversations:
+{% endblock %}
+
+
+{% block body %}
+
+<!-- Main container -->
+<div class="container">
+
+    <!-- First Row: Private conversations, back home button -->
+    <div class="row">
+
+        <!-- Main column -->
+        <div class="col-sm-9">
+
+            <!-- Message list -->
+            <h2>Private Channels:</h2>
+
+            <ul id="privateConversations" class="list-unstyled">
+                {% for targetName in targetNames %}
+                    <li><a href="/privateMessage/{{ targetName }}/{{ username }}">{{ targetName }}</a></li>
+                {% endfor %}
+            </ul>
+            <!-- Message list -->
+
+            <hr>
+
+        </div>
+        <!-- Main column -->
+
+        <div class="col-sm-3"></div>
+    </div>
+    <!-- First Row: Messages, new message form -->
+
+    <hr>
+
+    <!-- Second Row: Upload file form, leave channel button -->
+    <div class="row">
+
+        <a href='{{ url_for("home") }}'><button type="button" class="btn btn-secondary">Back Home</button></a>
+
+    </div>
+    <!-- Second Row: Upload file form, leave channel button -->
+
+</div>
+<!-- Main container -->
+
+{% endblock %}

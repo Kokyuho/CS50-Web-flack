@@ -5,7 +5,7 @@
     <title>FlaCK</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles.css?id=2">
 
     {% block script %}{% endblock %}
   </head>
@@ -34,12 +34,21 @@
 
                     <ul class="navbar-nav">
 
-                      <li class="nav-item active">
-                        <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
+                      <li class="nav-item active notification">
+                        <a class="nav-link" href="/home">
+                          <span>Home</span>
+                          <span class="sr-only">(current)</span></a>
                       </li>
 
                       <li class="nav-item">
-                        <a class="nav-link" href="#">Post a Review</a>
+                        <a class="nav-link notification" href="/privateMessages/{{session['username']}}">
+                          <span>Private Messages</span>
+                          {% if badge == 0 %}
+                            <span class="badge"></span>
+                          {% else %}
+                            <span class="badge">{{ badge }}</span>
+                          {% endif %}
+                        </a>
                       </li>
 
                     </ul>
@@ -145,7 +154,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    
+
   </body>
 </html>
 
