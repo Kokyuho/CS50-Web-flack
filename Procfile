@@ -1,1 +1,1 @@
-web: gunicorn application:app --log-level=debug
+web: gunicorn --worker-class socketio.sgunicorn.GeventSocketIOWorker --log-file=- application:app

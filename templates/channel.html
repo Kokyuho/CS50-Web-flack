@@ -15,6 +15,8 @@
         // When connected, configure buttons
         socket.on('connect', () => {
 
+            console.log('CONNECTED!!!')
+
             // Join room on connection
             socket.emit('join', { 'channelName': '{{ channelName|safe }}', 'username': localStorage.getItem('username')});
 

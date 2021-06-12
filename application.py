@@ -319,3 +319,6 @@ class RingBuffer:
     def get(self):
         """ Return a list of elements from the oldest to the newest. """
         return self.data
+
+if __name__ == "__main__":
+    socketio.run(app)
