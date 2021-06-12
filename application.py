@@ -105,6 +105,7 @@ def channel(channelName):
 
     # Return home/index otherwise.
     else:
+        print("CHANNEL:" + channelName + "NOT IN CHANNEL LIST!")
         return redirect("/home")
 
 
