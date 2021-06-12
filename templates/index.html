@@ -24,7 +24,7 @@
 
                     // Initialize new request
                     const request = new XMLHttpRequest();
-                    request.open('POST', '/saveUsername');
+                    request.open('POST', '{{ url_for('saveUser') }}');
 
                     // Add data to send with request
                     const data = new FormData();
@@ -47,7 +47,7 @@
                 // Initialize new request
                 const request = new XMLHttpRequest();
                 const channelName = document.querySelector('#channel').value;
-                request.open('POST', '/addChannel');
+                request.open('POST', '{{ url_for('addChannel') }}');
 
                 // Callback function for when request completes
                 request.onload = () => {
@@ -70,7 +70,7 @@
 
                 // Create new item for list
                 const li = document.createElement('li');
-                li.innerHTML = `<a href="channels/${channelName}">${channelName}</a>`;
+                li.innerHTML = `<a href="{{ url_for("channel", channelName="channelName") }}">${channelName}</a>`.replace("channelName", `${channelName}`);
 
                 // Add new item to task list
                 document.querySelector('#channelList').append(li);
@@ -118,7 +118,7 @@
             <ol id="channelList">
                 {% for channel in channels %}
                     <li>
-                        <a href="channels/{{ channel }}">{{ channel }}</a>
+                        <a href="{{ url_for('channel', channelName=channel) }}">{{ channel }}</a>
                     </li>
                 {% endfor %}
             </ol>

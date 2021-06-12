@@ -70,7 +70,7 @@
         // When a new message is announced, add to the unordered list and send a received message
         socket.on('announce message', data => {
             const li = document.createElement('li');
-            li.innerHTML = `<span class="font-weight-bold">[<a href="/privateMessage/${data.username}/{{ username }}">${data.username}</a> @ ${data.datetime}]</span>: ${data.content}`;
+            li.innerHTML = `<span class="font-weight-bold">[<a href="{{ url_for('privateMessage', targetName='targetName', username=username) }}">${data.username}</a> @ ${data.datetime}]</span>: ${data.content}`.replace('targetName', `${data.username}`);
             document.querySelector('#messages').append(li);
             socket.emit('message received', {'username': localStorage.getItem('username'), 'channelName': '{{ channelName|safe }}'});
         });
@@ -78,7 +78,7 @@
         // When a new file is announced, add to the unordered list
         socket.on('announce file', data => {
             const li = document.createElement('li');
-            li.innerHTML = `<span class="font-weight-bold">[<a href="/privateMessage/${data.username}/{{ username }}">${data.username}</a> @ ${data.datetime}]</span>: <img id="blah2" height=200 src="${data.file}" alt="your image 2" />`;
+            li.innerHTML = `<span class="font-weight-bold">[<a href="{{ url_for('privateMessage', targetName='targetName', username=username) }}">${data.username}</a> @ ${data.datetime}]</span>: <img id="blah2" height=200 src="${data.file}" alt="your image 2" />`.replace('targetName', `${data.username}`);
             document.querySelector('#messages').append(li);
             socket.emit('file received', {'username': localStorage.getItem('username'), 'channelName': '{{ channelName|safe }}'});
         });
@@ -121,10 +121,10 @@
                 {% for message in messages %}
 
                     {% if 'image' in message[2] %}
-                        <li><span class="font-weight-bold">[<a href="/privateMessage/{{ message[0] }}/{{ username }}">{{ message[0] }}</a> @ {{ message[1] }}]</span>: <img height=200 src="{{ message[2] }}"></li>
+                        <li><span class="font-weight-bold">[<a href="{{ url_for('privateMessage', targetName=message[0], username=username) }}">{{ message[0] }}</a> @ {{ message[1] }}]</span>: <img height=200 src="{{ message[2] }}"></li>
                         <!-- <li><span class="font-weight-bold">[{{ message[0] }}]</span>: <img height=200 src="/instance/uploads/{{ message[1] }}"></li> -->
                     {% else %}
-                        <li><span class="font-weight-bold">[<a href="/privateMessage/{{ message[0] }}/{{ username }}">{{ message[0] }}</a> @ {{ message[1] }}]</span>: {{ message[2] }}</li>
+                        <li><span class="font-weight-bold">[<a href="{{ url_for('privateMessage', targetName=message[0], username=username) }}">{{ message[0] }}</a> @ {{ message[1] }}]</span>: {{ message[2] }}</li>
                     {% endif %}
 
                 {% endfor %}

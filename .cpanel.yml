@@ -5,3 +5,4 @@ deployment:
     - /bin/cp -R static $DEPLOYPATH
     - /bin/cp -R templates $DEPLOYPATH
     - /bin/cp application.py $DEPLOYPATH
+    - /bin/cp requirements.txt $DEPLOYPATH

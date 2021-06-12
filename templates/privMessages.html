@@ -29,7 +29,7 @@
 
             <ul id="privateConversations" class="list-unstyled">
                 {% for targetName in targetNames %}
-                    <li><a href="/privateMessage/{{ targetName }}/{{ username }}">{{ targetName }}</a></li>
+                    <li><a href="{{ url_for('privateMessage', targetName=targetName, username=username) }}">{{ targetName }}</a></li>
                 {% endfor %}
             </ul>
             <!-- Message list -->
