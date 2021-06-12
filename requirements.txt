@@ -5,4 +5,5 @@ python-engineio==3.13.2
 python-socketio==4.6.0
 requests==2.23.0
 Werkzeug==0.16
-gunicorn
+eventlet==0.25.2
+gunicorn==20.0.4
