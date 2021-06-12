@@ -180,7 +180,7 @@ def on_join(data):
 
     # Join that socket (SID) to the channel
     join_room(channelName)
-    print(username + ' has joined ' + channelName, room=channelName)
+    print(username + ' has joined ' + channelName)
 
     # # Check if it is a private channel and print joined SID if it is.
     # for i in privateChannelList:
